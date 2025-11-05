@@ -1,6 +1,9 @@
 const { sendResponse } = require("../../responses");
-const AWS = require('aws-sdk'); 
-const db = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { UpdateCommand, DynamoDBDocumentClient } = require('@aws-sdk/lib-dynamodb');
+
+const client = new DynamoDBClient({});
+const db = DynamoDBDocumentClient.from(client);
 
 exports.handler = async (event, context) => {
     const { dogId } = event.pathParameters;
@@ -15,9 +18,7 @@ exports.handler = async (event, context) => {
         return values;
     }, {});
 
-
-    try {
-        await db.update({
+    const command = new UpdateCommand({
             TableName: 'dogs-sls-db',
             Key: {id: dogId},
             ReturnValues: 'ALL_NEW',
@@ -28,8 +29,10 @@ exports.handler = async (event, context) => {
             //  ':color' , color 
             // }
 
-        }).promise();
+        });
 
+    try {
+        await db.send(command);
 
         return sendResponse(200, {success: true});
     } catch (error) {

@@ -1,23 +1,21 @@
 const { sendResponse } = require("../../responses");
-const AWS = require('aws-sdk'); 
-const db = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { GetCommand, DynamoDBDocumentClient } = require('@aws-sdk/lib-dynamodb');
+
+const client = new DynamoDBClient({});
+const db = DynamoDBDocumentClient.from(client);
+
 
 exports.handler = async (event, context) => {
     const { dogId } = event.pathParameters;    
 
-    // const command = new GetCommand({
-    //  TableName: 'dogs-sls-db',
-    //         Key: {id: dogId}
-    // })
+    const command = new GetCommand({
+        TableName: 'dogs-sls-db',
+        Key: {id: dogId}
+    });
 
     try {
-        const { Item } = await db.get({
-            TableName: 'dogs-sls-db',
-            Key: {id: dogId}
-
-        }).promise();
-
-        // const { Item } = await db.send(command);
+        const { Item } = await db.send(command);
 
         if (Item) {
             return sendResponse(200, { succes: true, dog: Item});

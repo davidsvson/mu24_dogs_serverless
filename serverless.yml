@@ -48,6 +48,7 @@ functions:
           path: '/dogs/{dogId}'
           method: PATCH
 
+#crud
 
 resources:
   Resources:
@@ -62,3 +63,20 @@ resources:
           - AttributeName: id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+
+
+
+
+
+
+
+# tenant ex hundagiset äpplet , päronet, moroten - pk 
+
+#  sk - DOG#1928347
+# 
+# dogs
+# owners
+
+# sk - OWNER#1023987#DOG#0293478
+
+#sk RANGE
