@@ -1,19 +1,21 @@
 
-const AWS = require('aws-sdk');
 const { sendResponse } = require('../../responses');
-const db = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { ScanCommand, DynamoDBDocumentClient } = require('@aws-sdk/lib-dynamodb');
+
+const client = new DynamoDBClient({});
+const db = DynamoDBDocumentClient.from(client);
 
 exports.handler = async (event, context) => {
 
-    const {Items} = await db.scan({
+   const command = new ScanCommand({
       TableName: 'dogs-sls-db',
       FilterExpression: "attribute_exists(#id)",
       ExpressionAttributeNames: {
-        "#id" : "id"
-      }
-    }).promise();
+        "#id" : "id"}
+      });
 
-
+    const { Items } = await db.send(command);
 
     return sendResponse(200, {success : true, dogs : Items});
 }
